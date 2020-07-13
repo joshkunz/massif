@@ -23,6 +23,11 @@ func TestParse(t *testing.T) {
 		want    *Massif
 	}{
 		{
+			name:    "totally empty",
+			content: "",
+			want:    &Massif{},
+		},
+		{
 			name: "preamble only",
 			content: strings.Join([]string{
 				`desc: --massif-out-file=/outs/blah.massif`,
@@ -147,6 +152,79 @@ func TestParse(t *testing.T) {
 
 			if diff := cmp.Diff(test.want, got); diff != "" {
 				t.Errorf("Parse(..) has diff (want -> got):\n%s", diff)
+			}
+		})
+	}
+}
+
+func TestParse_Error(t *testing.T) {
+	cases := []struct {
+		name    string
+		content string
+	}{
+		{
+			name: "no snapshot introducer",
+			content: strings.Join([]string{
+				`snapshot=0`,
+				`#-----------`,
+				`time=161677632`,
+				`mem_heap_B=1616423`,
+				`mem_heap_extra_B=140569`,
+				`mem_stacks_B=0`,
+				`heap_tree=empty`,
+			}, "\n"),
+		},
+		{
+			name: "no snapshot contents",
+			content: strings.Join([]string{
+				`#-----------`,
+				`snapshot=0`,
+				`#-----------`,
+			}, "\n"),
+		},
+		{
+			name: "no snapshot header",
+			content: strings.Join([]string{
+				`time=161677632`,
+				`mem_heap_B=1616423`,
+				`mem_heap_extra_B=140569`,
+				`mem_stacks_B=0`,
+				`heap_tree=empty`,
+			}, "\n"),
+		},
+		{
+			name: "no snapshot index separator",
+			content: strings.Join([]string{
+				`#-----------`,
+				`snapshot=0`,
+				`time=161677632`,
+				`mem_heap_B=1616423`,
+				`mem_heap_extra_B=140569`,
+				`mem_stacks_B=0`,
+				`heap_tree=empty`,
+			}, "\n"),
+		},
+		{
+			name: "missing snapshot field",
+			content: strings.Join([]string{
+				`#-----------`,
+				`snapshot=0`,
+				`#-----------`,
+				`time=161677632`,
+				// missing: `mem_heap_B=1616423`,
+				`mem_heap_extra_B=140569`,
+				`mem_stacks_B=0`,
+				`heap_tree=empty`,
+			}, "\n"),
+		},
+	}
+
+	for _, test := range cases {
+		t.Run(test.name, func(t *testing.T) {
+			t.Logf("Massif File Contents:\n%s", test.content)
+			if got, err := Parse(strings.NewReader(test.content)); err == nil { // note err == nil
+				t.Logf("Unexpected parse:\n%+v", got)
+				t.Errorf("Parse(...) got nil, expected error")
 			}
 		})
 	}

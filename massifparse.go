@@ -32,9 +32,10 @@ type Massif struct {
 }
 
 type parser struct {
-	sc   *bufio.Scanner
-	m    *Massif
-	line int
+	sc    *bufio.Scanner
+	m     *Massif
+	atEOF bool
+	line  int
 }
 
 func (p *parser) abort(f string, args ...interface{}) {
@@ -49,7 +50,8 @@ const (
 )
 
 func (p *parser) scan(c eofContext) {
-	if !p.sc.Scan() {
+	p.atEOF = !p.sc.Scan()
+	if p.atEOF {
 		err := p.sc.Err()
 		if err != nil {
 			panic(err)
@@ -57,8 +59,9 @@ func (p *parser) scan(c eofContext) {
 		if c != noAbortOnEOF {
 			p.abort("unexpected end of file while parsing %s", c)
 		}
+	} else {
+		p.line++
 	}
-	p.line++
 }
 
 func (p *parser) text() string {
@@ -125,7 +128,7 @@ func (p *parser) parseDetailedHeapTree() string {
 		// If we're about to start the next snapshot, then we're done parsing
 		// the heap tree.
 		if p.text() == snapshotSeparator {
-			break
+			return tree.String()
 		}
 		if addNewline {
 			tree.WriteByte('\n')
@@ -133,6 +136,8 @@ func (p *parser) parseDetailedHeapTree() string {
 		tree.WriteString(p.text())
 		addNewline = true
 	}
+	// Need to update p.atEOF, so we can detect partially recognized input.
+	p.atEOF = true
 	return tree.String()
 }
 
@@ -176,6 +181,9 @@ func (p *parser) parse() (err error) {
 	p.parseHeader()
 	for p.text() == snapshotSeparator {
 		p.m.Snapshots = append(p.m.Snapshots, p.parseSnapshot())
+	}
+	if !p.atEOF {
+		p.abort("trailing unparsable content starting on this line.")
 	}
 	return p.sc.Err()
 }
