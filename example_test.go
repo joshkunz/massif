@@ -10,6 +10,7 @@ import (
 )
 
 func Example() {
+	// Load the example massif file off disk.
 	f, err := os.Open("testdata/example.massif")
 	if err != nil {
 		log.Fatalf("failed to open testdata/example.massif: %v", err)
@@ -75,4 +76,33 @@ func Example() {
 	//     }
 	//   ]
 	// }
+}
+
+// ExamplePeakUsage prints the peak memory usage found in the example massif
+// run.
+func Example_peakUsage() {
+	// Load the example massif file off disk.
+	f, err := os.Open("testdata/example.massif")
+	if err != nil {
+		log.Fatalf("failed to open testdata/example.massif: %v", err)
+	}
+	defer f.Close()
+
+	parsed, err := massifparse.Parse(f)
+	if err != nil {
+		log.Fatalf("failed to parse testdata/example.massif: %v", err)
+	}
+
+	var max *massifparse.Snapshot
+	for _, snap := range parsed.Snapshots {
+		if max == nil || snap.MemoryHeap > max.MemoryHeap {
+			max = &snap
+		}
+	}
+
+	fmt.Printf("Max memory usage of %.2f MiB in snapshot %d at time %s%s",
+		max.MemoryHeap.Mebibytes(), max.Index, max.Time, parsed.TimeUnit)
+
+	// Output:
+	// Max memory usage of 2.63 MiB in snapshot 3 at time 273947848i
 }
