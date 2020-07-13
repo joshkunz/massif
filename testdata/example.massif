@@ -1,0 +1,41 @@
+desc: --massif-out-file=./example.massif
+cmd: example_binary --option-one --option-two --flag=value
+time_unit: i
+#-----------
+snapshot=0
+#-----------
+time=0
+mem_heap_B=0
+mem_heap_extra_B=0
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=1
+#-----------
+time=103242501
+mem_heap_B=1123587
+mem_heap_extra_B=89197
+mem_stacks_B=0
+heap_tree=detailed
+Note: This heap is snipped.
+n6: 1123587 (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+ n0: 12558 in 28 places, all below massif's threshold (1.00%)
+#-----------
+snapshot=2
+#-----------
+time=161677632
+mem_heap_B=1616423
+mem_heap_extra_B=140569
+mem_stacks_B=0
+heap_tree=detailed
+Note: This heap is snipped.
+n6: 1616423 (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+ n0: 13839 in 28 places, all below massif's threshold (1.00%)
+#-----------
+snapshot=3
+#-----------
+time=273947848
+mem_heap_B=2758273
+mem_heap_extra_B=239383
+mem_stacks_B=0
+heap_tree=empty
