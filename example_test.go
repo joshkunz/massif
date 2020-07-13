@@ -1,10 +1,10 @@
 package massifparse_test
 
 import (
-	"os"
-	"log"
-	"fmt"
 	"encoding/json"
+	"fmt"
+	"log"
+	"os"
 
 	"github.com/joshkunz/massifparse"
 )
