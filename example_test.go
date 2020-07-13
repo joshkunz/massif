@@ -1,4 +1,4 @@
-package massifparse_test
+package massif_test
 
 import (
 	"encoding/json"
@@ -6,7 +6,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/joshkunz/massifparse"
+	"github.com/joshkunz/massif"
 )
 
 func Example() {
@@ -17,7 +17,7 @@ func Example() {
 	}
 	defer f.Close()
 
-	parsed, err := massifparse.Parse(f)
+	parsed, err := massif.Parse(f)
 	if err != nil {
 		log.Fatalf("failed to parse testdata/example.massif: %v", err)
 	}
@@ -88,12 +88,12 @@ func Example_peakUsage() {
 	}
 	defer f.Close()
 
-	parsed, err := massifparse.Parse(f)
+	parsed, err := massif.Parse(f)
 	if err != nil {
 		log.Fatalf("failed to parse testdata/example.massif: %v", err)
 	}
 
-	var max *massifparse.Snapshot
+	var max *massif.Snapshot
 	for _, snap := range parsed.Snapshots {
 		if max == nil || snap.MemoryHeap > max.MemoryHeap {
 			max = &snap

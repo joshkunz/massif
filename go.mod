@@ -1,4 +1,4 @@
-module github.com/joshkunz/massifparse
+module github.com/joshkunz/massif
 
 go 1.14
 

@@ -1,4 +1,4 @@
-package massifparse
+package massif
 
 import (
 	"bytes"
