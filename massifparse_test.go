@@ -1,6 +1,7 @@
 package massifparse
 
 import (
+	"bytes"
 	"strings"
 	"testing"
 
@@ -152,6 +153,16 @@ func TestParse(t *testing.T) {
 
 			if diff := cmp.Diff(test.want, got); diff != "" {
 				t.Errorf("Parse(..) has diff (want -> got):\n%s", diff)
+			}
+
+			var buf bytes.Buffer
+			if err := got.Serialize(&buf); err != nil {
+				t.Fatalf("m.Serialize(...) = %v, want nil", err)
+			}
+			serialized := strings.TrimSuffix(buf.String(), "\n")
+
+			if diff := cmp.Diff(test.content, serialized); diff != "" {
+				t.Errorf("m.Serialize(...) differs from original content diff (want -> got)\n%s", diff)
 			}
 		})
 	}
