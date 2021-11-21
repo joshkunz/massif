@@ -1,0 +1,13 @@
+{
+  "extends": [
+    "config:base",
+    ":disableDependencyDashboard",
+    ":timezone(America/Los_Angeles)",
+    "group:allNonMajor"
+  ],
+  "golang": {
+    "postUpdateOptions": [
+      "gomodTidy"
+    ]
+  }
+}
