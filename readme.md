@@ -2,8 +2,7 @@
 
 [![API Reference](https://img.shields.io/badge/go.pkg.dev-reference-5272B4)](
 https://pkg.go.dev/github.com/joshkunz/massif?tab=doc)
-[![Build Status](https://travis-ci.org/joshkunz/massif.svg?branch=master)](
-https://travis-ci.org/joshkunz/massif)
+[![Build Status](https://github.com/joshkunz/massif/actions/workflows/test.yaml/badge.svg)](https://github.com/joshkunz/massif/actions/workflows/test.yaml)
 [![LICENSE](
 https://img.shields.io/github/license/joshkunz/massif?color=informational)](
 LICENSE)
